@@ -1,0 +1,129 @@
+#3 mongodb instances consist a replica set : "my_replica_set"
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-node-1
+  labels:
+    name: mongo-node-1
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+    protocol: TCP
+    name: mongo-node-1
+  selector:
+    name: mongo-replica-node1
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-node-b
+  labels:
+    name: mongo-node-b
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+    protocol: TCP
+    name: mongo-node-b
+  selector:
+    name: mongo-replica-node2
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-node-c
+  labels:
+    name: mongo-node-c
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+    protocol: TCP
+    name: mongo-node-c
+  selector:
+    name: mongo-replica-node3
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: mongo-replica-rc1
+  labels:
+    name: mongo-replica-rc
+spec:
+  replicas: 1
+  selector:
+    name: mongo-replica-node1
+  template:
+    metadata:
+      labels:
+        name: mongo-replica-node1
+    spec:
+      containers:
+      - name: mongo-replica-node1
+        image: index.caicloud.io/caicloud/mongo:3.2
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-replica-storage1
+          mountPath: /data/db
+      volumes:
+      - name: mongo-replica-storage1
+        emptyDir: {}
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: mongo-replica-rc2
+  labels:
+    name: mongo-replica-rc
+spec:
+  replicas: 1
+  selector:
+    name: mongo-replica-node2
+  template:
+    metadata:
+      labels:
+        name: mongo-replica-node2
+    spec:
+      containers:
+      - name: mongo-replica-node2
+        image: index.caicloud.io/caicloud/mongo:3.2
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-replica-storage2
+          mountPath: /data/db
+      volumes:
+      - name: mongo-replica-storage2
+        emptyDir: {}
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: mongo-replica-rc3
+  labels:
+    name: mongo-replica-rc
+spec:
+  replicas: 1
+  selector:
+    name: mongo-replica-node3
+  template:
+    metadata:
+      labels:
+        name: mongo-replica-node3
+    spec:
+      containers:
+      - name: mongo-replica-node3
+        image: index.caicloud.io/caicloud/mongo:3.2
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-replica-storage3
+          mountPath: /data/db
+      volumes:
+      - name: mongo-replica-storage3
+        emptyDir: {}
