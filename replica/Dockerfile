@@ -1,5 +1,5 @@
 # mongo-cluster
-FROM mongo:latest
+FROM mongo:3.2
 
 EXPOSE 27017
 
