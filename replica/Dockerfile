@@ -9,5 +9,6 @@ RUN mkdir -p /opt/mongo/ && \
 COPY start_replica.sh /opt/mongo/
 
 WORKDIR /opt/mongo
+USER mongodb
 
 CMD /opt/mongo/start_replica.sh
